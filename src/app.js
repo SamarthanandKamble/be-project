@@ -44,6 +44,7 @@ app.get("/user/getUserDetails",authenticateUser, async (req, res) => {
   }
 })
 
+
 app.post("/user/update",authenticateUser, async (req,res) => { 
   try {
     const existingFirstName = req?.body?.existingFirstName;
