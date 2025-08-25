@@ -34,7 +34,7 @@ app.get("/user/getUserDetails",authenticateUser, async (req, res) => {
     res.status(400).json({ message: "Bad request: firstName is required" });
   }
   try {
-    const user = await User.find({ firstName });
+    const user = await User.exists({ firstName });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
