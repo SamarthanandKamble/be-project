@@ -69,6 +69,10 @@ app.post("/user/update",authenticateUser, async (req,res) => {
       { firstName: updatedFirstName },
       { new: true, runValidators: true }
     );
+
+    if (!response) {
+      return res.status(404).json({ message: "User not found" });
+    }  
     res.status(200).json({ message: "User updated successfully", user: response });
 
 } catch (error) {
