@@ -45,17 +45,17 @@ app.get("/user/getUserDetails",authenticateUser, async (req, res) => {
 })
 
 
-app.post("/user/update",authenticateUser, async (req,res) => { 
+app.patch("/user/update",authenticateUser, async (req,res) => { 
   try {
-    const existingFirstName = req?.body?.existingFirstName;
+    const userId = req?.body?.userId;
     const updatedFirstName = req?.body?.updatedFirstName;
 
-    if (!existingFirstName || !updatedFirstName) { 
-      return res.status(400).json({ message: "Bad request: existingFirstName and updatedFirstName are required" });
+    if (!userId || !updatedFirstName) { 
+      return res.status(400).json({ message: "userId field is required" });
     }
 
     //Chck if the existingfirstName is present in Db
-    const user = User.findOne({ firstName: existingFirstName });
+    const user = User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -64,8 +64,8 @@ app.post("/user/update",authenticateUser, async (req,res) => {
     // res.status(200).json({ message: "User updated successfully", user });
 
     // Alternatively, you can use findOneAndUpdate
-    const response = await User.findOneAndUpdate(
-      { firstName: existingFirstName },
+    const response = await User.findByIdAndUpdate(
+      { _id: userId },
       { firstName: updatedFirstName },
       { new: true, runValidators: true }
     );
