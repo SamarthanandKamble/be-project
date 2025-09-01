@@ -3,19 +3,22 @@ require('dotenv').config();
 const connectDB = require('./config/database');
 const app = express();
 const User = require('./model/user');
-
+const { authenticateUser } = require("./middleware/user");
 const port = process.env.PORT;
 app.use(express.json());
-
+const authRoutes = require("./routes/preLogin");
 
 // Middleware to authenticate user
-const authenticateUser = ("/user",(req, res, next) => {
-  console.log("Authenticating user...");
-  next();
-})
+// const authenticateUser = ("/user",(req, res, next) => {
+//   console.log("Authenticating user...");
+//   next();
+// })
 
 // CRUD operations for User
 // Create a new user
+
+app.use("/api",authRoutes);
+
 app.post("/user/signup",authenticateUser, async (req,res) => {
   const userRequestBody = req?.body
   try {
