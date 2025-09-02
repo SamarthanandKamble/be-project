@@ -1,6 +1,3 @@
-
-//add pre login routes
-
 const express = require('express');
 const { loginHandler,signupHandler,forgotPasswordHandler } = require('../controllers/preLogin');
 const router = express.Router();
