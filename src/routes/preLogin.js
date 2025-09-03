@@ -8,8 +8,6 @@ router.post("/login", loginHandler)
 router.post("/signup", signupHandler)
 router.patch("/forgotPassword", forgotPasswordHandler)
 router.post("/unlockAccount", unlockAccountHandler)
-// router.post("/signup", loginValidation, loginHandler)
 // router.post("/resetPassword", loginValidation, loginHandler)
-// router.post("/forgotPassword", loginValidation, loginHandler)
 
 module.exports = router;
