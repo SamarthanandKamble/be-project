@@ -10,6 +10,8 @@ email: { type: String, required: true, unique: [true,"Email already exists!"], v
 }},
 password: {type: String, required: true},
 city: { type: String },
+isLocked: { type: Boolean, default: false },
+loginAttempts: { type: Number, default: 0 },
 }, {
     timestamps:true
 });
