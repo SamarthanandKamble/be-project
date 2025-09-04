@@ -1,18 +1,25 @@
 const express = require("express");
-require('dotenv').config();
-const connectDB = require('./config/database');
+require("dotenv").config();
+const connectDB = require("./config/database");
+const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT;
+const preLoginRoutes = require("./routes/preLogin/preLogin");
+const postLoginRoutes = require("./routes/postLogin/postLogin");
+
 app.use(express.json());
-const preLoginRoutes = require("./routes/preLogin");
+app.use(cookieParser());
 
-app.use("/api/pre",preLoginRoutes);
+app.use("/api/pre", preLoginRoutes);
+app.use("/api/post", postLoginRoutes);
 
-connectDB().then(() => {
-  console.log("Connected to the database successfully");
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+connectDB()
+  .then(() => {
+    console.log("Connected to the database successfully");
+    app.listen(port, () => {
+      console.log(`Example app listening on port ${port}`);
+    });
   })
-}).catch((err) => {
-  console.error("Database connection error:", err);
-})
+  .catch((err) => {
+    console.error("Database connection error:", err);
+  });

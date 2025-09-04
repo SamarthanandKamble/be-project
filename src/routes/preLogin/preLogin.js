@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginHandler,signupHandler,forgotPasswordHandler, unlockAccountHandler } = require('../controllers/preLogin');
+const { loginHandler, signupHandler, forgotPasswordHandler, unlockAccountHandler } = require('../../controllers/preLogin');
 const router = express.Router();
 
 // Pre-login route
@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/login", loginHandler)
 router.post("/signup", signupHandler)
 router.patch("/forgotPassword", forgotPasswordHandler)
-router.post("/unlockAccount", unlockAccountHandler)
+router.patch("/unlockAccount", unlockAccountHandler)
 // router.post("/resetPassword", loginValidation, loginHandler)
 
 module.exports = router;

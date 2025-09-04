@@ -5,7 +5,8 @@ const {
     signupValidation,
     forgotPasswordValidation,
 } = require("../utils/validations/userValidation");
-const { MAXIMUM_LOGIN_ATTEMPTS } = require("../utils/constants");
+const { MAXIMUM_LOGIN_ATTEMPTS, SALT_ROUNDS } = require("../utils/constants");
+var jwt = require('jsonwebtoken');
 
 const loginHandler = async (req, res) => {
     try {
@@ -14,13 +15,10 @@ const loginHandler = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (user?.isLocked) {
-            return res
-                .status(403)
-                .json({
-                    message:
-                        "Account is locked due to multiple failed login attempts. Please unlock your account.",
-                });
-
+            return res.status(403).json({
+                message:
+                    "Account is locked due to multiple failed login attempts. Please unlock your account.",
+            });
         }
 
         if (!validationErrors.isValid) {
@@ -35,33 +33,42 @@ const loginHandler = async (req, res) => {
                 .json({ message: "User not found,please sign up!" });
         }
 
-        if (user?.loginAttempts >= MAXIMUM_LOGIN_ATTEMPTS ) {
+        if (user?.loginAttempts >= MAXIMUM_LOGIN_ATTEMPTS) {
             await User.findOneAndUpdate(
                 { email },
                 { isLocked: true, loginAttempts: MAXIMUM_LOGIN_ATTEMPTS },
                 { new: true }
             );
-            return res
-            .status(403)
-            .json({
+            return res.status(403).json({
                 message:
-                "Account locked due to multiple failed login attempts. Please unlock your account.",
+                    "Account locked due to multiple failed login attempts. Please unlock your account.",
             });
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
+            const remainigAttemptsToLogin =
+                MAXIMUM_LOGIN_ATTEMPTS - (user?.loginAttempts + 1);
 
-            const remainigAttemptsToLogin = MAXIMUM_LOGIN_ATTEMPTS - (user?.loginAttempts + 1);
-            
             await User.findOneAndUpdate(
                 { email },
                 { $inc: { loginAttempts: 1 } },
                 { new: true }
             );
-            return res.status(401).json({ message: `Invalid credentials, remaining attempts for login ${remainigAttemptsToLogin}`  });
+            return res
+                .status(401)
+                .json({
+                    message: `Invalid credentials, remaining attempts for login ${remainigAttemptsToLogin}`,
+                });
+        } else {
+            if (user.loginAttempts > 0) {
+                user.loginAttempts = 0;
+                await user.save();
+            }
         }
-        res.status(200).json({ message: "Logged in Successfully!", user });
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET,);
+        res.cookie('token', token);
+        res.status(200).json({ message: "Logged in Successfully!" });
     } catch (error) {
         res
             .status(500)
@@ -87,7 +94,7 @@ const signupHandler = async (req, res) => {
                 .json({ message: "User already exists, please login!" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
         const newUser = new User({
             firstName,
@@ -158,7 +165,7 @@ const forgotPasswordHandler = async (req, res) => {
 
 const unlockAccountHandler = async (req, res) => {
     try {
-        const { email ,password} = req?.body;
+        const { email, password } = req?.body;
         // const isValidationErrors = unlockAccountValidation(req?.body);
         // if (!isValidationErrors.isValid) {
         //     return res.status(400).json({
@@ -172,9 +179,12 @@ const unlockAccountHandler = async (req, res) => {
                 .status(404)
                 .json({ message: "User not found,please sign up!" });
         }
-        
-        const comparePassword = await bcrypt.compare(password, isExisitingUser.password);
-        if(!comparePassword){
+
+        const comparePassword = await bcrypt.compare(
+            password,
+            isExisitingUser.password
+        );
+        if (!comparePassword) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
