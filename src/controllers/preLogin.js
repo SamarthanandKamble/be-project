@@ -66,8 +66,7 @@ const loginHandler = async (req, res) => {
                 await user.save();
             }
         }
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET,);
-        res.cookie('token', token);
+        jwt.sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET, { expiresIn: '1h', encoding: 'utf-8', });
         res.status(200).json({ message: "Logged in Successfully!" });
     } catch (error) {
         res
