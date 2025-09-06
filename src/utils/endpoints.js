@@ -7,7 +7,8 @@ const endpoints = {
         LOGOUT: "/logout",
     },
     PROFILE: {
-        PROFILE: "/profile",
+        PROFILE: "/getUserDetails",
+        UPDATE: "/update"
     },
     DASHBOARD: {
         /*

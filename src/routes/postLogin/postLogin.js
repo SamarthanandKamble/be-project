@@ -1,10 +1,12 @@
 const express = require('express');
-const { profileHandler } = require('../../controllers/postLogin/profile');
+const { getUserDetails } = require('../../controllers/postLogin/getProfileDetails');
+const { updateUserDetails } = require('../../controllers/postLogin/updateProfile');
 const { authenticateUser } = require('../../middleware/userAuth');
 const router = express.Router();
 const endpoints = require('../../utils/endpoints');
-const { PROFILE } = endpoints.PROFILE;
+const { PROFILE, UPDATE } = endpoints.PROFILE;
 
-router.post(PROFILE, authenticateUser, profileHandler)
+router.get(PROFILE, authenticateUser, getUserDetails)
+router.patch(UPDATE, authenticateUser, updateUserDetails)
 
 module.exports = router;
