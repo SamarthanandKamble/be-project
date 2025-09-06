@@ -10,8 +10,8 @@ const postLoginRoutes = require("./routes/postLogin/postLogin");
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/pre", preLoginRoutes);
-app.use("/api/post", postLoginRoutes);
+app.use("/auth", preLoginRoutes);
+app.use("/user", postLoginRoutes);
 
 connectDB()
   .then(() => {

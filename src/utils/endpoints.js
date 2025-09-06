@@ -4,6 +4,7 @@ const endpoints = {
         SIGNUP: "/signup",
         FORGOT_PASSWORD: "/forgotPassword",
         UNLOCK_ACCOUNT: "/unlockAccount",
+        LOGOUT: "/logout",
     },
     PROFILE: {
         PROFILE: "/profile",

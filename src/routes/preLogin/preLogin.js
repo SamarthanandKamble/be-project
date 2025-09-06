@@ -1,13 +1,14 @@
 const express = require('express');
-const { loginHandler, signupHandler, forgotPasswordHandler, unlockAccountHandler } = require('../../controllers/preLogin');
+const { loginHandler, signupHandler, forgotPasswordHandler, unlockAccountHandler, logoutHandler } = require('../../controllers/preLogin');
 const router = express.Router();
+const endpoints = require('../../utils/endpoints');
 
-// Pre-login route
+const { LOGIN, FORGOT_PASSWORD, SIGNUP, UNLOCK_ACCOUNT, LOGOUT } = endpoints.AUTH;
 
-router.post("/login", loginHandler)
-router.post("/signup", signupHandler)
-router.patch("/forgotPassword", forgotPasswordHandler)
-router.patch("/unlockAccount", unlockAccountHandler)
-// router.post("/resetPassword", loginValidation, loginHandler)
+router.post(LOGIN, loginHandler)
+router.get(LOGOUT, logoutHandler)
+router.post(SIGNUP, signupHandler)
+router.patch(FORGOT_PASSWORD, forgotPasswordHandler)
+router.patch(UNLOCK_ACCOUNT, unlockAccountHandler)
 
 module.exports = router;

@@ -66,7 +66,8 @@ const loginHandler = async (req, res) => {
                 await user.save();
             }
         }
-        jwt.sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET, { expiresIn: '1h', encoding: 'utf-8', });
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET, { expiresIn: '1h', encoding: 'utf-8', });
+        res.cookie('token', token);
         res.status(200).json({ message: "Logged in Successfully!" });
     } catch (error) {
         res
@@ -204,9 +205,16 @@ const unlockAccountHandler = async (req, res) => {
     }
 };
 
+const logoutHandler = async (_, res) => {
+    res.cookie("token", null, { expires: new Date(Date.now()) }).send({
+        message: "Logged out successfully"
+    });
+}
+
 module.exports = {
     loginHandler,
     signupHandler,
     forgotPasswordHandler,
     unlockAccountHandler,
+    logoutHandler
 };
