@@ -206,7 +206,7 @@ const unlockAccountHandler = async (req, res) => {
 };
 
 const logoutHandler = async (_, res) => {
-    res.cookie("token", null, { expires: new Date(Date.now()) }).send({
+    res.clearCookie("token").send({
         message: "Logged out successfully"
     });
 }
