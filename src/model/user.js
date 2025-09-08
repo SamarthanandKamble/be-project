@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema(
         dob: { type: String, trim: true, format: 'YYYY-MM-DD' },
         gender: {
             type: String,
+            enum: {
+                values: ["male", "female"],
+                message: "{VALUE} is not supported",
+            }
         },
         city: { type: String },
         isLocked: { type: Boolean, default: false },
