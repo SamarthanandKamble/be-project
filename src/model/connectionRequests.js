@@ -20,6 +20,17 @@ const ConnectionRequestsSchema = new mongoose.Schema(
     }
 );
 
+
+const checkIfConnectionRequestToSelf = async function (next) {
+    const connectionRequest = this;
+    if (connectionRequest.fromUserId.equals(connectionRequest.toUserId)) {
+        return next(new Error(connectionRequest.fromUserId + " You cannot send a connection request to yourself"));
+    }
+    next();
+}
+
+ConnectionRequestsSchema.pre('save', checkIfConnectionRequestToSelf)
+
 const ConnectionRequestsModel = mongoose.model(
     "ConnectionRequests",
     ConnectionRequestsSchema
