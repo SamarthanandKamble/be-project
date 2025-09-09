@@ -7,7 +7,7 @@ const connectionRequests = async (req, res) => {
         const { status, toUserId } = req.params;
         const exisitingUser = req.user;
         const toUser = await User.findById(toUserId);
-        const collections = await ConnectionRequestsModel.find({ fromUserId: exisitingUser._id, toUserId: toUserId });
+        const isConnectionRequestAlreadySent = await ConnectionRequestsModel.findOne({ $or: [{ fromUserId: exisitingUser._id, toUserId: toUserId }, { fromUserId: toUserId, toUserId: exisitingUser._id }] });
 
         if (!exisitingUser || !toUser) {
             return res.status(404).json({ message: "User not found" });
@@ -17,8 +17,8 @@ const connectionRequests = async (req, res) => {
             return res.status(400).json({ message: exisitingUser.firstName + ", you cannot send a request to yourself!" });
         }
 
-        if (collections.length > 0) {
-            return res.status(400).json({ message: "Connection request has been already sent to " + toUser.firstName });
+        if (isConnectionRequestAlreadySent) {
+            return res.status(400).json({ message: "Connection request has already been sent to " + toUser.firstName });
         }
 
         const connection = await ConnectionRequestsModel.create({
