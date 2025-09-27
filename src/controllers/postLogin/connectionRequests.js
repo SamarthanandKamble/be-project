@@ -1,3 +1,4 @@
+const { mongoose } = require("mongoose");
 const ConnectionRequestsModel = require("../../model/connectionRequests");
 const User = require("../../model/user");
 
@@ -6,7 +7,13 @@ const connectionRequests = async (req, res) => {
 
         const { status, toUserId } = req.params;
         const exisitingUser = req.user;
+
+        if (!mongoose.Types.ObjectId.isValid(toUserId)) {
+            return res.status(400).json({ message: "Invalid user ID" });
+        }
+
         const toUser = await User.findById(toUserId);
+
         const isConnectionRequestAlreadySent = await ConnectionRequestsModel.findOne({ $or: [{ fromUserId: exisitingUser._id, toUserId: toUserId }, { fromUserId: toUserId, toUserId: exisitingUser._id }] });
 
         if (!exisitingUser || !toUser) {
