@@ -11,7 +11,8 @@ const endpoints = {
         UPDATE: "/update"
     },
     DASHBOARD: {
-        CONNECTION_REQUESTS: "/connectionRequests/send/:status/:toUserId",
+        SEND_CONNECTION_REQUESTS: "/connectionRequests/send/:status/:toUserId",
+        RECIEVED_REQUESTS: "/connectionRequests/recieved",
     },
 }
 

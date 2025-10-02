@@ -2,7 +2,7 @@ const { mongoose } = require("mongoose");
 const ConnectionRequestsModel = require("../../model/connectionRequests");
 const User = require("../../model/user");
 
-const connectionRequests = async (req, res) => {
+const sendConnectionRequest = async (req, res) => {
     try {
 
         const { status, toUserId } = req.params;
@@ -45,4 +45,17 @@ const connectionRequests = async (req, res) => {
     }
 };
 
-module.exports = { connectionRequests };
+const recievedConnectionRequests = async (req, res) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const recivedRequests = await ConnectionRequestsModel.find({ toUserId: user._id, status: "interested" }).populate("fromUserId", "firstName lastName email");
+        res.status(200).json({ count: recivedRequests?.length, recivedRequests });
+    } catch (error) {
+        res.send(500).json({ message: "Internal Server error", error: error.message });
+    }
+}
+
+module.exports = { sendConnectionRequest, recievedConnectionRequests };
