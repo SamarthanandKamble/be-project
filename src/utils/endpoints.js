@@ -12,6 +12,7 @@ const endpoints = {
     },
     DASHBOARD: {
         SEND_CONNECTION_REQUESTS: "/connectionRequests/send/:status/:toUserId",
+        RESPOND_CONNECTION_REQUESTS: "/connectionRequests/respond/:status/:toUserId",
         RECIEVED_REQUESTS: "/connectionRequests/recieved",
     },
 }

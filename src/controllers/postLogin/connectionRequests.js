@@ -58,4 +58,32 @@ const recievedConnectionRequests = async (req, res) => {
     }
 }
 
-module.exports = { sendConnectionRequest, recievedConnectionRequests };
+const respondConnectionRequest = async (req, res) => {
+
+    try {
+        const { status, toUserId } = req.params || {};
+        const user = req.user;
+        const validStatuses = ["accepted", "rejected"];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid status!" });
+        }
+        const updatedResult = await ConnectionRequestsModel.findOneAndUpdate({
+            _id: toUserId,
+            toUserId: user._id,
+            status: "interested"
+        }, { status: status }, { new: true });
+
+
+        if (!updatedResult) {
+            return res.status(400).json({ message: "No pending request found from this user" });
+        }
+
+        res.status(200).json({ message: `Connection request ${status} successfully` });
+
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server error", error: error.message });
+    }
+}
+
+module.exports = { sendConnectionRequest, recievedConnectionRequests, respondConnectionRequest };
